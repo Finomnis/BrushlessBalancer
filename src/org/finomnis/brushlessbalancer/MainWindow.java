@@ -1,13 +1,10 @@
 package org.finomnis.brushlessbalancer;
 
-import java.awt.EventQueue;
+//import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
 import java.awt.BorderLayout;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
-import javax.swing.JLabel;
+
 
 public class MainWindow {
 
@@ -16,7 +13,7 @@ public class MainWindow {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -27,7 +24,7 @@ public class MainWindow {
 				}
 			}
 		});
-	}
+	}*/
 
 	/**
 	 * Create the application.

@@ -1,4 +1,4 @@
-package ArduinoInterface;
+package org.finomnis.brushlessbalancer.arduinointerface;
 
 public class Measurement {
 

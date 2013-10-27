@@ -1,4 +1,4 @@
-package ArduinoInterface;
+package org.finomnis.brushlessbalancer.arduinointerface;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -129,7 +129,7 @@ public class ArduinoInterface extends Thread {
     			measurementsLock.lock();
     			measurements.add(newM);
     			measurementsLock.unlock();
-    			System.out.println(newM.x + "\t" + newM.y + "\t" + newM.z);
+    			System.out.println(newM.x + ", " + newM.y + ", " + newM.z);
     			valsInMeasurement = 0;
     			numValuesLeft--;
     			if(numValuesLeft <= 0)

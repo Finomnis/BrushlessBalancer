@@ -1,9 +1,10 @@
 package org.finomnis.brushlessbalancer;
 
+import org.finomnis.brushlessbalancer.arduinointerface.ArduinoInterface;
+
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
-import ArduinoInterface.ArduinoInterface;
 
 public class Main {
 
