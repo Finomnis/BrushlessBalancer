@@ -129,7 +129,7 @@ public class ArduinoInterface extends Thread {
     			measurementsLock.lock();
     			measurements.add(newM);
     			measurementsLock.unlock();
-    			System.out.println(newM.x + ", " + newM.y + ", " + newM.z);
+    			//System.out.println(newM.x + ", " + newM.y + ", " + newM.z);
     			valsInMeasurement = 0;
     			numValuesLeft--;
     			if(numValuesLeft <= 0)
@@ -148,6 +148,9 @@ public class ArduinoInterface extends Thread {
 		measurementArray = measurements.toArray(measurementArray);
 		measurements.clear();
 		measurementsLock.unlock();
+		
+		if(measurementArray.length < 1)
+			return;
 		for(DataReceiver receiver: receiverList)
 		{
 			receiver.receiveData(measurementArray);
