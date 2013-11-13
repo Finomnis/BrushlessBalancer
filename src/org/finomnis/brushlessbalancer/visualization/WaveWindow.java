@@ -1,5 +1,7 @@
 package org.finomnis.brushlessbalancer.visualization;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -18,6 +20,9 @@ public class WaveWindow extends GraphWindow implements DataReceiver {
 	
 	private final int num_data;
 	
+	private long lastTime = System.currentTimeMillis();
+	private float data_per_second = 0.0f;
+	private long data_measured = 0;
 	
 	public WaveWindow(int size_x, int size_y,
 			int num_data) {
@@ -29,6 +34,17 @@ public class WaveWindow extends GraphWindow implements DataReceiver {
 			buffer.add(new Vector<Float>(num_data * 2));
 	}
 
+	@Override
+	protected String getName(int graphId){
+		switch(graphId)
+		{
+		case 0: return "X-Axis";
+		case 1: return "Y-Axis";
+		case 2: return "Z-Axis";
+		default: return "Invalid";
+		}
+	}
+	
 	@Override
 	public void receiveData(Measurement[] measurements) {
 		//System.out.println("Data recieved");
@@ -49,7 +65,28 @@ public class WaveWindow extends GraphWindow implements DataReceiver {
 			}
 		}
 		
+		long timeDelta = System.currentTimeMillis() - lastTime;
+		data_measured += measurements.length;
+		if(timeDelta > 500)
+		{
+			data_per_second = data_measured * 1000.0f / (float) timeDelta;
+			lastTime += timeDelta;
+			data_measured = 0;
+		}
+		
 		this.repaint();
+	}
+	
+	@Override
+	protected void paintBuffer(Graphics2D g){
+		
+		g.setColor(Color.DARK_GRAY);
+		
+		String label = "Data Rate: " + (int)data_per_second + " Hz"; 
+		
+		g.drawChars(label.toCharArray(), 0, label.length(), 5, 60);
+		
+		super.paintBuffer(g);
 	}
 
 }

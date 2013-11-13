@@ -30,7 +30,9 @@ public class ArduinoInterface extends Thread {
 	private Lock measurementsLock = new ReentrantLock();
 	
 	private List<DataReceiver> receiverList = new ArrayList<DataReceiver>();
-	
+	//private float lastx;
+	//private float lasty;
+	//private float lastz;
 	
 	
 	public ArduinoInterface(String portName) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException
@@ -93,7 +95,7 @@ public class ArduinoInterface extends Thread {
     
     private void onReceive(byte b)
     {
-    	//System.out.println(b + " - " + state);
+    	//System.out.println(b + " - " + Integer.toBinaryString(b) + " - " + state);
     	if(lastByte == 64 && b == 64){
     		state = State.WAIT_FOR_NUM;
     		//System.out.println(measurements.size());
@@ -120,16 +122,33 @@ public class ArduinoInterface extends Thread {
     	{
     		newMeasurement[valsInMeasurement] = b;
     		valsInMeasurement++;
-    		if(valsInMeasurement > 5)
+    		if(valsInMeasurement > 3)
     		{
     			Measurement newM = new Measurement();
-    			newM.x = newMeasurement[1] << 8 | newMeasurement[0];
-    			newM.y = newMeasurement[3] << 8 | newMeasurement[2];
-    			newM.z = newMeasurement[5] << 8 | newMeasurement[4];
+    			newM.x = newMeasurement[0]; if(newM.x < 0) newM.x += 256;
+    			newM.y = newMeasurement[1]; if(newM.y < 0) newM.y += 256;
+    			newM.z = newMeasurement[2]; if(newM.z < 0) newM.z += 256;
+    			int tmp1, tmp2, tmp3;
+    			tmp1 = (0x3 & (newMeasurement[3] >> 0));
+    			tmp2 = (0x3 & (newMeasurement[3] >> 2));
+    			tmp3 = (0x3 & (newMeasurement[3] >> 4));
+    			newM.x += tmp1 * 256;
+    			newM.y += tmp2 * 256;
+    			newM.z += tmp3 * 256;
+    			newM.x -= 512;
+    			newM.y -= 512;
+    			newM.z -= 512;
+    			
+    			
     			measurementsLock.lock();
     			measurements.add(newM);
     			measurementsLock.unlock();
-    			//System.out.println(newM.x + ", " + newM.y + ", " + newM.z);
+    			//if(Math.abs(newM.x) + Math.abs(newM.y) + Math.abs(newM.z) > 2000)
+    			//if(Math.abs(lastx - newM.x) > 128 || Math.abs(lasty - newM.y) > 128 || Math.abs(lastz - newM.z) > 128)
+    			//	System.out.println(newM.x + ", " + newM.y + ", " + newM.z);
+      			//lastx = newM.x;
+      			//lasty = newM.y;
+      			//lastz = newM.z;
     			valsInMeasurement = 0;
     			numValuesLeft--;
     			if(numValuesLeft <= 0)

@@ -1,12 +1,12 @@
 package org.finomnis.brushlessbalancer;
 
 import org.finomnis.brushlessbalancer.arduinointerface.ArduinoInterface;
-import org.finomnis.brushlessbalancer.filter.AlphaLowPass;
-import org.finomnis.brushlessbalancer.filter.AveragingLowPass;
+//import org.finomnis.brushlessbalancer.filter.AlphaLowPass;
+//import org.finomnis.brushlessbalancer.filter.AveragingLowPass;
 import org.finomnis.brushlessbalancer.filter.Filter;
 import org.finomnis.brushlessbalancer.filter.OffsetFilter;
 import org.finomnis.brushlessbalancer.visualization.FourierWindow;
-import org.finomnis.brushlessbalancer.visualization.WaveWindow;
+//import org.finomnis.brushlessbalancer.visualization.WaveWindow;
 
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
@@ -25,24 +25,27 @@ public class Main {
 		String[] ports = ArduinoInterface.getPorts();
 		if(ports.length < 1) throw new RuntimeException("No port available!");
 		
-		WaveWindow graphWindow = new WaveWindow(500, 500, 100);
-		FourierWindow fftWindow = new FourierWindow(500, 500, 512, 100.0f, false);
+		//WaveWindow graphWindow = new WaveWindow(500, 500, 400);
+		FourierWindow fftWindow = new FourierWindow(500, 500, 512, 256, 1/1600.0f, 10.0f, false);
 		
 		
-		Filter lowPass = new AveragingLowPass(10);
+		//Filter lowPass = new AveragingLowPass(10);
 		Filter offset = new OffsetFilter(0.004f);
 		
 				
 		ArduinoInterface arduino = new ArduinoInterface(ports[0]);
 		arduino.addReciever(offset);
+		//arduino.addReciever(graphWindow);
 		offset.addReciever(fftWindow);
-		offset.addReciever(lowPass);
-		lowPass.addReciever(graphWindow);
+		//offset.addReciever(lowPass);
+		//lowPass.addReciever(graphWindow);
 		arduino.start();
 		while(true)
 		{
-			Thread.sleep(1);
+			long time = System.nanoTime();
 			arduino.receive();
+			while(System.nanoTime() - time < 15000000)
+				Thread.sleep(1);
 		}
 		
 	}

@@ -28,8 +28,8 @@ public class GraphWindow extends JPanel {
 
 	private Image doubleBufferImage;
 	private Graphics2D doubleBufferGraphics;
-	private int doubleBufferWidth  = 0;
-	private int doubleBufferHeight = 0;
+	protected int doubleBufferWidth  = 0;
+	protected int doubleBufferHeight = 0;
 	private Lock dataLock = new ReentrantLock();
 	private float[][] v;
 	
@@ -71,12 +71,23 @@ public class GraphWindow extends JPanel {
 		}
 	}
 	
+	protected String getName(int graphId){
+		return "data" + graphId;
+	}
+	
 	protected void paintBuffer(Graphics2D g){
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		//////////////////////////////////////
 		/// THE MAIN DRAWING CODE
 		///
+		for(int i = 0; i < v.length; i++)
+		{
+			g.setColor(getColor(i));
+			char[] name = getName(i).toCharArray();
+			g.drawChars(name, 0, name.length, 5, 15 + 15 * i);
+		}
+		
 		dataLock.lock();
 		for(int graphId = v.length - 1; graphId >= 0; graphId--)
 		{
@@ -111,6 +122,15 @@ public class GraphWindow extends JPanel {
 		dataLock.lock();
 		for(int i = 0; i < v[graphId].length; i++)
 			v[graphId][i] = list[offset*i];
+		dataLock.unlock();
+	}
+	
+	protected void setData(int graphId, float[] list, int start, int end)
+	{
+		if(end - start != v[graphId].length)
+			throw new RuntimeException("Invalid argument, wrong data count!");
+		dataLock.lock();
+		System.arraycopy(list, start, v[graphId], 0, end-start);
 		dataLock.unlock();
 	}
 	
