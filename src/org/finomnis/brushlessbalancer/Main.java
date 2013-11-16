@@ -1,5 +1,7 @@
 package org.finomnis.brushlessbalancer;
 
+import javax.swing.JOptionPane;
+
 import org.finomnis.brushlessbalancer.arduinointerface.ArduinoInterface;
 //import org.finomnis.brushlessbalancer.filter.AlphaLowPass;
 //import org.finomnis.brushlessbalancer.filter.AveragingLowPass;
@@ -7,6 +9,7 @@ import org.finomnis.brushlessbalancer.filter.Filter;
 import org.finomnis.brushlessbalancer.filter.OffsetFilter;
 import org.finomnis.brushlessbalancer.visualization.FourierWindow;
 //import org.finomnis.brushlessbalancer.visualization.WaveWindow;
+
 
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
@@ -23,7 +26,10 @@ public class Main {
 	 */
 	public static void main(String[] args) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, InterruptedException {
 		String[] ports = ArduinoInterface.getPorts();
-		if(ports.length < 1) throw new RuntimeException("No port available!");
+		if(ports.length < 1){
+			JOptionPane.showMessageDialog(null, "Unable to connect to MotorBalancer!", "ERROR", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
 		
 		//WaveWindow graphWindow = new WaveWindow(500, 500, 400);
 		FourierWindow fftWindow = new FourierWindow(500, 500, 512, 256, 1/1600.0f, 10.0f, false);
